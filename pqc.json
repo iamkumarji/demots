@@ -1,0 +1,118 @@
+{
+  "cbomVersion": "1.0",
+  "metadata": {
+    "name": "PQC Hybrid Encryption for Secure Communication",
+    "description": "Post-quantum hybrid encryption using ML-KEM (Kyber) and AES-GCM with explicit security levels",
+    "creator": "Engineering Team",
+    "created": "2025-01-01",
+    "profile": "PQC-HYBRID"
+  },
+  "cryptographicArchitecture": {
+    "pattern": "Hybrid Encryption",
+    "description": "Post-quantum key encapsulation combined with symmetric authenticated encryption"
+  },
+  "components": [
+    {
+      "componentId": "kem-kyber512",
+      "type": "KeyEncapsulationMechanism",
+      "algorithm": "ML-KEM (Kyber512)",
+      "standard": "NIST PQC",
+      "securityLevel": {
+        "nistLevel": 1,
+        "classicalBits": 128,
+        "quantumResistance": true
+      },
+      "usage": "Key exchange / shared secret derivation",
+      "status": "Approved"
+    },
+    {
+      "componentId": "kem-kyber768",
+      "type": "KeyEncapsulationMechanism",
+      "algorithm": "ML-KEM (Kyber768)",
+      "standard": "NIST PQC",
+      "securityLevel": {
+        "nistLevel": 3,
+        "classicalBits": 192,
+        "quantumResistance": true
+      },
+      "usage": "Key exchange / shared secret derivation",
+      "status": "Approved"
+    },
+    {
+      "componentId": "kem-kyber1024",
+      "type": "KeyEncapsulationMechanism",
+      "algorithm": "ML-KEM (Kyber1024)",
+      "standard": "NIST PQC",
+      "securityLevel": {
+        "nistLevel": 5,
+        "classicalBits": 256,
+        "quantumResistance": true
+      },
+      "usage": "Key exchange / shared secret derivation",
+      "status": "Approved"
+    },
+    {
+      "componentId": "sym-aes-128-gcm",
+      "type": "SymmetricEncryption",
+      "algorithm": "AES-128-GCM",
+      "standard": "FIPS 197 / NIST SP 800-38D",
+      "securityLevel": {
+        "classicalBits": 128,
+        "quantumImpact": "Grover-reduced to ~64 bits"
+      },
+      "usage": "Data encryption and authentication",
+      "status": "Approved"
+    },
+    {
+      "componentId": "sym-aes-256-gcm",
+      "type": "SymmetricEncryption",
+      "algorithm": "AES-256-GCM",
+      "standard": "FIPS 197 / NIST SP 800-38D",
+      "securityLevel": {
+        "classicalBits": 256,
+        "quantumImpact": "Grover-reduced to ~128 bits"
+      },
+      "usage": "Data encryption and authentication",
+      "status": "Approved"
+    }
+  ],
+  "dataFlow": [
+    {
+      "step": 1,
+      "operation": "Key Encapsulation",
+      "description": "Sender encapsulates a shared secret using receiver's ML-KEM public key",
+      "components": ["kem-kyber512", "kem-kyber768", "kem-kyber1024"]
+    },
+    {
+      "step": 2,
+      "operation": "Key Derivation",
+      "description": "Shared secret is truncated to required AES key size",
+      "components": ["sym-aes-128-gcm", "sym-aes-256-gcm"]
+    },
+    {
+      "step": 3,
+      "operation": "Authenticated Encryption",
+      "description": "AES-GCM encrypts and authenticates the message payload",
+      "components": ["sym-aes-128-gcm", "sym-aes-256-gcm"]
+    }
+  ],
+  "securityProperties": {
+    "confidentiality": true,
+    "integrity": true,
+    "authentication": true,
+    "forwardSecrecy": true,
+    "quantumResistance": true
+  },
+  "threatModel": {
+    "storeNowDecryptLater": "Mitigated",
+    "quantumAdversary": "Mitigated",
+    "classicalAdversary": "Mitigated",
+    "mitm": "Mitigated with authenticated public keys"
+  },
+  "compliance": [
+    "NIST Post-Quantum Cryptography Program",
+    "NIST SP 800-56C (Hybrid Key Establishment)",
+    "FIPS 197",
+    "NIST SP 800-38D"
+  ]
+}
